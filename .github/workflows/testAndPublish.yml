@@ -162,8 +162,15 @@ jobs:
     - name: Install SignPath
       if: ${{ env.feature_signing }}
       run: Install-Module -Name SignPath -Force
-    - name: Create launcher
+    - name: Create unsigned launcher
+      if: ${{ !(github.event_name == 'push' && env.feature_signing) }}
       shell: cmd
+      run: scons %sconsOutTargets% %sconsArgs% ${{ !runner.debug && '--all-cores' || '-j1'}}
+    - name: Create signed launcher
+      if: ${{ github.event_name == 'push' && env.feature_signing }}
+      shell: cmd
+      env:
+        apiSigningToken: ${{ secrets.API_SIGNING_TOKEN }}
       run: scons %sconsOutTargets% %sconsArgs% ${{ !runner.debug && '--all-cores' || '-j1'}}
     - name: Upload launcher
       id: uploadLauncher
