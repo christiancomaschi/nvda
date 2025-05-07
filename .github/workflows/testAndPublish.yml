@@ -201,7 +201,7 @@ jobs:
         apiSigningToken: ${{ (github.event_name == 'push' && env.feature_signing) && secrets.API_SIGNING_TOKEN || '' }}
     - name: Install SignPath
       if: ${{ github.event_name == 'push' && env.feature_signing }}
-      run: Install-PSResource -Name SignPath -TrustRepository
+      run: Install-Module -Name SignPath -Force
     - name: Create launcher
       shell: cmd
       run: scons %sconsOutTargets% %sconsArgs% ${{ !runner.debug && '--all-cores' || '-j1'}}
