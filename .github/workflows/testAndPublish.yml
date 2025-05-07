@@ -197,18 +197,13 @@ jobs:
       run: ci/scripts/setBuildVersionVars.ps1
     - name: Set scons args
       run: ci/scripts/setSconsArgs.ps1
+      env:
+        apiSigningToken: ${{ (github.event_name == 'push' && env.feature_signing) && secrets.API_SIGNING_TOKEN || '' }}
     - name: Install SignPath
       if: ${{ github.event_name == 'push' && env.feature_signing }}
       run: Install-PSResource -Name SignPath -TrustRepository
-    - name: Create unsigned launcher
-      if: ${{ !(github.event_name == 'push' && env.feature_signing) }}
+    - name: Create launcher
       shell: cmd
-      run: scons %sconsOutTargets% %sconsArgs% ${{ !runner.debug && '--all-cores' || '-j1'}}
-    - name: Create signed launcher
-      if: ${{ github.event_name == 'push' && env.feature_signing }}
-      shell: cmd
-      env:
-        apiSigningToken: ${{ secrets.API_SIGNING_TOKEN }}
       run: scons %sconsOutTargets% %sconsArgs% ${{ !runner.debug && '--all-cores' || '-j1'}}
     - name: Upload launcher
       id: uploadLauncher
