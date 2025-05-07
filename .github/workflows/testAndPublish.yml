@@ -161,7 +161,7 @@ jobs:
       run: ci/scripts/setSconsArgs.ps1
     - name: Install SignPath
       if: ${{ env.feature_signing }}
-      run: Install-Module -Name SignPath -Force
+      run: Install-PSResource -Name SignPath -TrustRepository
     - name: Create unsigned launcher
       if: ${{ !(github.event_name == 'push' && env.feature_signing) }}
       shell: cmd
